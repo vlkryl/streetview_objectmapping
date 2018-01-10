@@ -37,7 +37,7 @@ Parameters:
 
 These are modified at the top of the python script. The main parameters are:
 1) input and output file locations;
-2) distance paprameters: maximal camera-to-object distance and cluster size;
+2) distance parameters: maximal camera-to-object distance and cluster size;
 3) MRF optimization parameters: number of ICM iterations and energy weights as defined in Eq. (4) in the technical paper.
 
 -----------------------------------------------------------

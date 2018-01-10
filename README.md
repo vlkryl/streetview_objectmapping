@@ -4,7 +4,10 @@ This repository contains Python (v2.7) implementation of the MRF-based tringulat
 
 "Automatic Discovery and Geotagging of Objects from Street View Imagery"
 by V. A. Krylov, E. Kenny, R. Dahyot.
-https://arxiv.org/abs/1708.08417
+
+Technical paper: https://arxiv.org/abs/1708.08417
+
+Video demo: https://www.youtube.com/watch?v=X0tM_iSRJMw
 
 -----------------------------------------------------------
 

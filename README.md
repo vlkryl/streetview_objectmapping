@@ -33,6 +33,13 @@ The module performs triangulation, MRF optimization to establish the optimal obj
 
 The output CSV contains the list of GPS-coordinates (latitude and longitude) of identified objects of interests and a score value for each of these. The score is the number of individual views contributing to an object (greater or equal to 2).
 
+Parameters:
+
+These are modified at the top of the python script. The main parameters are:
+1) input and output file locations;
+2) distance paprameters: maximal camera-to-object distance and cluster size;
+3) MRF optimization parameters: number of ICM iterations and energy weights as defined in Eq. (4) in the technical paper.
+
 -----------------------------------------------------------
 
 Sample data:

@@ -3,6 +3,7 @@
 -----------------------------------------------------------
 
 This repository contains Python (v2.7) implementation of the MRF-based tringulation procedure introduced in
+
 "Automatic Discovery and Geotagging of Objects from Street View Imagery"
 by V. A. Krylov, E. Kenny, R. Dahyot.
 https://arxiv.org/abs/1708.08417

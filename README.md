@@ -1,7 +1,5 @@
 # streetview_objectmapping
 
------------------------------------------------------------
-
 This repository contains Python (v2.7) implementation of the MRF-based tringulation procedure introduced in
 
 "Automatic Discovery and Geotagging of Objects from Street View Imagery"
@@ -33,5 +31,3 @@ Sample data:
 The folder 'Sample dataset' conains the traffic lights dataset used in the paper:
 1) 'ground_truth.csv' contains a list of 50 traffic lights in Regent Street, London, UK;
 2) 'detection_input.csv' contains the output produced by the object detection and depth estimation pipelines presented in the paper. This file is used as input for the triangulation procedure.
-
------------------------------------------------------------

@@ -9,6 +9,8 @@ Technical paper: https://arxiv.org/abs/1708.08417
 
 Video demo: https://www.youtube.com/watch?v=X0tM_iSRJMw
 
+Version 1.1
+
 -----------------------------------------------------------
 
 License:

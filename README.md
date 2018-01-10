@@ -44,6 +44,6 @@ These are modified at the top of the python script. The main parameters are:
 
 Sample data:
 
-The folder 'Sample dataset' conains the traffic lights dataset used in the paper:
-1) 'ground_truth.csv' contains a list of 50 traffic lights in Regent Street, London, UK;
+Folder 'Sample dataset' contains the traffic lights dataset used in the paper:
+1) 'ground_truth.csv' gives a list of 50 traffic lights in Regent Street, London, UK (manually annotated);
 2) 'detection_input.csv' contains the output produced by the object detection and depth estimation pipelines presented in the paper. This file is used as input for the triangulation procedure.

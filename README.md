@@ -13,7 +13,8 @@ https://arxiv.org/abs/1708.08417
 License:
 
 This code is released under the MIT License (refer to the LICENSE file for details).
-Copyright (c) ADAPT centre, Trinity College Dublin, 2018
+
+Copyright (c) ADAPT centre, Trinity College Dublin, 2018.
 
 -----------------------------------------------------------
 

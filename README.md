@@ -16,6 +16,12 @@ Copyright (c) ADAPT centre, Trinity College Dublin, 2018.
 
 -----------------------------------------------------------
 
+Requirements:
+
+Python 2.7, Numpy, Scipy.
+
+-----------------------------------------------------------
+
 Functionality:
 
 The module takes the ouput of object detection and depth estimation deployed on the original image set. Each line in the input CSV file defines a detected object with FOUR floating point values: camera positions (GPS latitude and longitude), bearing from north clockwise in degrees towards the object in the panoramic image and the depth estimate. The latter may be omitted or set to zero.

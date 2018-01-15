@@ -5,7 +5,7 @@ Python implementation of the Markov Random Field-based triangulation procedure a
 **Automatic Discovery and Geotagging of Objects from Street View Imagery**<br />
 [Vladimir A. Krylov](https://sites.google.com/site/vlkryl/), Eamonn Kenny, and [Rozenn Dahyot](https://www.scss.tcd.ie/~dahyotr/).
 
-[arXiv](https://www.youtube.com/watch?v=X0tM_iSRJMw "arXiv")
+[arXiv](https://arxiv.org/abs/1708.08417 "arXiv paper")
 
 Version 1.1
 

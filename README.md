@@ -1,6 +1,6 @@
 # streetview_objectmapping
 
-Python implementation of the Markov Random Field-based triangulation procedure assisted by camera-to-object depth estimates.
+Python implementation of the Markov Random Field-based object-triangulation procedure assisted by camera-to-object depth estimates. The objects of interest are assumed to be stationary, compact (to allow a single GPS tag to cheracterize their location) and observable from several locations each.
 
 **Automatic Discovery and Geotagging of Objects from Street View Imagery**<br />
 [Vladimir A. Krylov](https://sites.google.com/site/vlkryl/), Eamonn Kenny, and [Rozenn Dahyot](https://www.scss.tcd.ie/~dahyotr/).

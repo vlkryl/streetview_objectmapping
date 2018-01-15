@@ -2,8 +2,7 @@
 
 Python implementation of the Markov Random Field-based triangulation procedure assisted by camera-to-object depth estimates.
 
-**Automatic Discovery and Geotagging of Objects from Street View Imagery**
-
+**Automatic Discovery and Geotagging of Objects from Street View Imagery**<br />
 [Vladimir A. Krylov](https://sites.google.com/site/vlkryl/), Eamonn Kenny, and [Rozenn Dahyot](https://www.scss.tcd.ie/~dahyotr/).
 
 [arXiv](https://www.youtube.com/watch?v=X0tM_iSRJMw "arXiv")
@@ -13,7 +12,7 @@ Version 1.1
 
 ## Requirements
 
-The requirements to run the code are: Python 2.7, Numpy, Scipy.
+The requirements to run the code are: Python 2.7, Numpy 1.8.0, Scipy 1.0.0.
 
 The testing was done in Ubuntu 16.04.
 

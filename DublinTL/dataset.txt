@@ -1,0 +1,22 @@
+This dataset contains traffic light (TL) in 0.75 square km area in central Dublin, Ireland. 
+The dataset consists of GPS-coordinates of all 192 supported (pole-mounted) TLs in 2015 and 209 in 2017 in the specified area. Dataset contains various types of standard and multi-section TLs for pedestrians, cars and trams. Multi-section or car+pedestrian TLs mounted on the same pole are considered as one object. Several suspended poles (above the road) present in the area are excluded from the set. TLs are clustered around 26 junctions of different complexity: from 2 to 16 TLs around the same road junction.
+
+The dataset has been assembled by interpretation of Google satellite optical images and validated in situ. The real TLs are within 1m from these estimated positions.
+
+All GPS coordinates are in WGS84 EPSG:4326 format - latitude and longitude.
+
+The dataset comprises:
+  1) DublinTL_boundary.csv:
+      list of 8 points specifying the vertices of the boundary polygon
+      boundary.shp, boundary.shx can be used to visualize the area in GIS
+  2) DublinTL_2015.csv:
+      list of 192 supported TLs as of March 2015 (also corresponds to the positions in 
+      ``2015 aerial laser and photogrammetry survey of Dublin city collection record,” doi:10.17609/N8MQ0N, Lidar dataset)
+  3) DublinTL_2017.csv:
+      list of 209 supported TLs as of October 2017
+  4) gsvs_all.csv:
+      list of 5441 Google Street View panoramas inside the area.
+      Each panorama is specified by latitude, longitude, panoID, year and month of acquisition. The PanoIDs should be used to query panoramas through Google APIs to reproduce the test image set. Note, that this list may not include all the imagery available from GSV in the area. Note also that the panoIDs and availability of imagery may be changed by Google.
+  5) gsvs_2015.csv:
+      list of 1307 GSV panoramas that correspond to TLs positions as of March 2015. 
+      Most of the images are from 2014 and 2015. Several images from 2017 supplement the set to cover missing bits of road. Any supported traffic lights in these panoramas are in the DublinTL_2015 list.

@@ -1,5 +1,33 @@
 #!/usr/bin/env python
 
+"""
+------------------------------------------
+This file contains the Python implementation of the MRF-based tringulation
+procedure introduced in "Automatic Discovery and Geotagging of Objects from
+Street View Imagery" by V. A. Krylov, E. Kenny, R. Dahyot.
+https://arxiv.org/abs/1708.08417
+
+version 1.1
+Copyright (c) ADAPT centre, Trinity College Dublin, 2018
+
+------------------------------------------
+The module takes the ouput of object detection and depth estimation deployed on
+the original image set. Each line in the input CSV file defines a detected
+object with FOUR floating point values: camera positions (GPS latitude and
+longitude), bearing from north clockwise in degrees towards the object in the
+panoramic image and the depth estimate. The latter may be omitted or set to
+zero.
+
+The module performs triangulation, MRF optimization to establish the optimal
+object configuration and clustering.
+
+The output CSV contains the list of GPS-coordinates (latitude and longitude) of
+identified objects of interests and a score value for each of these. The score
+is the number of individual views contributing to an object (greater or equal
+to 2).
+------------------------------------------
+"""
+
 from __future__ import print_function
 
 import sys
@@ -10,28 +38,10 @@ import numpy as np
 from math import radians, pi, cos, sin, asin, sqrt, tan, atan, exp, log
 from scipy.cluster.hierarchy import linkage, fcluster
 
-'''
-------------------------------------------
-This file contains Python (v2.7) implementation of the MRF-based tringulation procedure introduced in
-"Automatic Discovery and Geotagging of Objects from Street View Imagery"
-by V. A. Krylov, E. Kenny, R. Dahyot.
-https://arxiv.org/abs/1708.08417
 
-version 1.1
-Copyright (c) ADAPT centre, Trinity College Dublin, 2018
-
-------------------------------------------
-The module takes the ouput of object detection and depth estimation deployed on the original image set. Each line in the input CSV file defines a detected object with FOUR floating point values: camera positions (GPS latitude and longitude), bearing from north clockwise in degrees towards the object in the panoramic image and the depth estimate. The latter may be omitted or set to zero.
-
-The module performs triangulation, MRF optimization to establish the optimal object configuration and clustering.
-
-The output CSV contains the list of GPS-coordinates (latitude and longitude) of identified objects of interests and a score value for each of these. The score is the number of individual views contributing to an object (greater or equal to 2).
-------------------------------------------
-'''
-
-###########################################
-###  I N P U T     P A R A M E T E R S  ###
-###########################################
+#######################################
+#  I N P U T     P A R A M E T E R S  #
+#######################################
 
 # Input CSV file
 inputfilename = 'Sample dataset/Traffic lights 50/detection_input.csv'
@@ -53,7 +63,6 @@ StandAlonePrice = max(1 - DepthWeight - ObjectMultiView,
 ###########################################
 
 
-# conversion from (lat,lon) to meters
 def LatLonToMeters(lat, lon):
     "Converts given lat/lon in WGS84 Datum to XY in Spherical Mercator EPSG:4326"
     originShift = 2 * pi * 6378137 / 2.0
@@ -61,8 +70,6 @@ def LatLonToMeters(lat, lon):
     my = log(tan((90 + lat) * pi / 360.0)) / (pi / 180.0)
     my = my * originShift / 180.0
     return mx, my
-
-# conversion from meters to (lat,lon)
 
 
 def MetersToLatLon(mx, my):
@@ -74,11 +81,11 @@ def MetersToLatLon(mx, my):
     return lat, lon
 
 
-# haversine distance formula between two points specified by their GPS coordinates
 def haversine(lon1, lat1, lon2, lat2):
     """
-    Calculate the great circle distance between two points
-    on the earth (specified in decimal degrees)
+    Haversine distance formula between two points specified by their GPS
+    coordinates.  Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees).
     """
     # convert decimal degrees to radians
     lon1, lat1, lon2, lat2 = list(map(radians, [lon1, lat1, lon2, lat2]))
@@ -90,10 +97,10 @@ def haversine(lon1, lat1, lon2, lat2):
     m = 6367000. * c
     return m
 
-# calculating the intersection  point between two rays (specified each by camera position and depth-estimated object location)
-
 
 def Intersect(Object1, Object2, MaxObjectDstFromCam):
+    """Calculate the intersection  point between two rays (specified each by
+    camera position and depth-estimated object location)"""
     latC1 = Object1[5]
     latC2 = Object2[5]
     lonC1 = Object1[6]
@@ -128,10 +135,9 @@ def Intersect(Object1, Object2, MaxObjectDstFromCam):
     mx, my = a1*x+latC1, a2*x+lonC1
     return x, y, mx, my
 
-# calculate the MRF energy of an intersection
-
 
 def CalcEnergyObject(ObjectsDst, ObjectsBase, ObjectsConnectivity, Object):
+    """Calculate the MRF energy of an intersection"""
     inters = np.count_nonzero(ObjectsConnectivity[Object, :])
     if inters == 0:
         return StandAlonePrice
@@ -149,10 +155,9 @@ def CalcEnergyObject(ObjectsDst, ObjectsBase, ObjectsConnectivity, Object):
                 dpthmax = dpth
     return Energy + ObjectMultiView*(dpthmax-dpthmin)
 
-# calculate the averaged object location (used after clustering)
-
 
 def CalcAvrgObject(Intersects, ObjectsConnectivity, Object):
+    """Calculate the averaged object location (used after clustering)"""
     res = np.zeros(2)
     cnt = 0
     for i in range(Intersects.shape[0]):
@@ -164,8 +169,8 @@ def CalcAvrgObject(Intersects, ObjectsConnectivity, Object):
     return res
 
 
-# hierarchical clustering
 def MyClust(intersects, MaxIntraDegreeDst):
+    """hierarchical clustering"""
     Z = linkage(np.asarray(intersects))
     clusters = fcluster(Z, MaxIntraDegreeDst, criterion='distance') - 1
     NumClusters = max(clusters) + 1
@@ -198,9 +203,9 @@ def main(arguments):
         print('A file with the specified ouput name cannot be created. Aborting.')
         return
 
-    ###############################
-    #### A L L  O B J E C T S #####
-    ###############################
+    ########################
+    # A L L  O B J E C T S #
+    ########################
 
     with open(inputfilename, 'r') as f:
         next(f)   # skip the first line
@@ -217,7 +222,8 @@ def main(arguments):
             if depth <= 0:
                 depth = 5
 
-            # calculating the object positions from camera position + bearing + depth_estimate
+            # calculating the object positions from camera position + bearing +
+            # depth_estimate
             mx, my = LatLonToMeters(lat, lon)
             br1 = radians(bearing)
             yCP = my + depth * cos(br1) * 640/256   # depth-based positions
@@ -233,11 +239,12 @@ def main(arguments):
 
     print("All detected objects: {0:d}".format(len(ObjectsBase)))
 
-    #############################
-    #### A D M I S S I B L E ####
-    #############################
+    #######################
+    # A D M I S S I B L E #
+    #######################
 
-    # the maximal distance between the two camera positions observing the same object
+    # the maximal distance between the two camera positions observing the same
+    # object
     MaxCamDst = 1.5 * MaxObjectDstFromCam
 
     Intersects = []
@@ -258,26 +265,28 @@ def main(arguments):
                 ObjectsDst[i, j] = -4
                 ObjectsDst[j, i] = -4
                 continue
-            ObjectsDst[i, j], ObjectsDst[j, i], Intersects[i, j, 0], Intersects[i, j, 1] = Intersect(
-                ObjectsBase[i], ObjectsBase[j], MaxObjectDstFromCam)
-            Intersects[j, i, 0], Intersects[j, i,
-                                            1] = Intersects[i, j, 0], Intersects[i, j, 1]
+
+            ObjectsDst[i, j], ObjectsDst[j, i], Intersects[i, j, 0], \
+                Intersects[i, j, 1] = Intersect(ObjectsBase[i], ObjectsBase[j],
+                                                MaxObjectDstFromCam)
+            Intersects[j, i, 0], Intersects[j, i, 1] = Intersects[i, j, 0], \
+                                                       Intersects[i, j, 1]
             if ObjectsDst[i, j] > 0:
                 NumIntersects += 1
 
     print("All admissible intersections: {0:d}".format(NumIntersects))
 
-    ObjectsConnectivity = np.zeros(
-        (len(ObjectsBase), len(ObjectsBase)), dtype=np.uint8)
-    ObjectsConnectivityViableOptions = np.zeros(
-        len(ObjectsBase), dtype=np.uint8)
+    ObjectsConnectivity = np.zeros((len(ObjectsBase), len(ObjectsBase)),
+                                   dtype=np.uint8)
+    ObjectsConnectivityViableOptions = np.zeros(len(ObjectsBase),
+                                                dtype=np.uint8)
     for i in range(len(ObjectsBase)):
         ObjectsConnectivityViableOptions[i] = np.count_nonzero(
             ObjectsDst[i, :] > 0)
 
-    #############################
-    ########### I C M ###########
-    #############################
+    ##############################
+    # Iterated Conditional Modes #
+    ##############################
 
     np.random.seed(int(100000.0*time.time()) % 1000000000)
     chngcnt = 0
@@ -326,9 +335,9 @@ def main(arguments):
         ObjectsConnectivity[testObjectPair, testObject] = 1 - \
             ObjectsConnectivity[testObjectPair, testObject]
 
-    #############################
-    #### C L U S T E R I N G ####
-    #############################
+    #######################
+    # C L U S T E R I N G #
+    #######################
 
     mx, my = LatLonToMeters((ObjectsBase[0])[0], (ObjectsBase[0])[1])
     d45 = 0.707 * MaxDstInCluster * 640.0/256
@@ -352,10 +361,12 @@ def main(arguments):
     with open(outputfilename, "w") as inter:
         inter.write("lat,lon,score\n")
         for i in range(NumClusters):
-            inter.write("{0:f},{1:f},{2:d}\n".format(IntersectClusters[i, 0]/IntersectClusters[i, 2],
-                                                     IntersectClusters[i, 1]/IntersectClusters[i, 2], int(IntersectClusters[i, 2])))
-    print("Number of output ICM clusters: {0:d}".format(NumClusters))
+            inter.write("{0:f},{1:f},{2:d}\n".format(
+                IntersectClusters[i, 0] / IntersectClusters[i, 2],
+                IntersectClusters[i, 1] / IntersectClusters[i, 2],
+                int(IntersectClusters[i, 2])))
 
+    print("Number of output ICM clusters: {0:d}".format(NumClusters))
     print("Elapsed total time: {0:.2f} seconds.".format(time.time() - start))
 
 
